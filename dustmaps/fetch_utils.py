@@ -21,6 +21,7 @@ from __future__ import print_function, division
 from . import std_paths
 
 import requests
+import platform
 
 try:
     from urllib2 import urlopen
@@ -351,7 +352,17 @@ def dataverse_search_doi(doi):
     """
 
     url = '{}/api/datasets/:persistentId?persistentId=doi:{}'.format(dataverse, doi)
-    r = requests.get(url)
+
+    # https://github.com/IQSS/dataverse.harvard.edu/issues/479 
+    r = requests.get(
+        url, 
+        headers={
+            'user-agent': '{}/{}'.format(
+                platform.system(), 
+                platform.release()
+            )
+        }
+    )
 
     try:
         r.raise_for_status()
